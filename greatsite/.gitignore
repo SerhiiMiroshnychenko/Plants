@@ -1,0 +1,4 @@
+.idea
+.venv
+plants/migrations
+db.sqlite3
