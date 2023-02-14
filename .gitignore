@@ -2,3 +2,6 @@
 .venv
 plants/migrations
 db.sqlite3
+
+/greatsite/plants/migrations/
+/venv/
