@@ -13,3 +13,6 @@ class Plants(models.Model):
     time_update = models.DateTimeField(auto_now=True)  # auto_now=True -> буде автоматично змінюватися кожен раз,
     # коли ми щось змінюємо в допису
     is_published = models.BooleanField(default=True)  #
+
+    def __str__(self):
+        return self.title
