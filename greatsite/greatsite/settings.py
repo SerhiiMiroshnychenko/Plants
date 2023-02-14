@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/4.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
-
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -24,8 +24,10 @@ SECRET_KEY = 'django-insecure-*36djozw^gh)0j@w8e%o3$x&_@_p)-e++fq+(j#2an4-68g0s1
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+# DEBUG = False
 
 ALLOWED_HOSTS = []
+# ALLOWED_HOSTS = ['127.0.0.1']  # При вимкненому режиму налаштувань(DEBUG = False)
 
 
 # Application definition
@@ -79,10 +81,11 @@ WSGI_APPLICATION = 'greatsite.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
+# Налаштування бази даних
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.sqlite3',  # Тип бази даних sqlite3
+        'NAME': BASE_DIR / 'db.sqlite3',  # Шлях до бази даних в нашому проєкті
     }
 }
 
@@ -127,3 +130,7 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')  # посилається на директорію 'media',
+# що знаходиться в поточному робочому каталозі нашого проєкту (це BASE_DIR)
+MEDIA_URL = '/media/'  # буде додавати до URL графічних файлів префікс '/media/'

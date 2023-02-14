@@ -13,13 +13,26 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from django.conf.urls.static import static
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 
-from plants.views import index
+from greatsite import settings
+from plants.views import *
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),  # Звернення до "адмінки" нашого сайту
-    path('plants/', index),  # https://127.0.0.1:8080/plants/
+    path('', include('plants.urls')),  # Передаємо посилання urls на додатку plants
+    # І вони починаються з головної сторінки
+
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+handler404 = pageNotFound  # Сторінка не знайдена
+
+# handler500 -> помилка серверу
+# handler403 -> доступ заборонено
+# handler400 -> неможливо обробити запит
