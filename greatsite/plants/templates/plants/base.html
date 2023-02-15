@@ -1,23 +1,70 @@
+{% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>{{ title }}</title>
+	<title>{{title}}</title>
+	<link type="text/css" href="{% static 'plants/css/styles.css' %}" rel="stylesheet" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<link rel="shortcut icon" href="{% static 'plants/images/main.ico' %}" type="image/x-icon"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
-{% block heading %}
-{% endblock %}
-
+<table class="table-page" border=0 cellpadding="0" cellspacing="0">
+<tr><td valign=top>
 {% block mainmenu %}
-<ul>
-  {% for m in menu %}
-  <li>{{ m }}</li>
-  {% endfor %}
-</ul>
-{% endblock mainmenu%}
+		<div class="header">
+			<ul id="mainmenu" class="mainmenu">
+			<li class="logo"><a href="#"><div class="logo"></div></a></li>
+{% for m in menu %}
+	{% if not forloop.last %}
+			<li><a href="#">{{m.title}}</a></li>
+	{% else %}
+			<li class="last"><a href="#">{{m.title}}</a></li>
+	{% endif %}
+{% endfor %}
+			</ul>
+			<div class="clear"></div>
+		</div>
+{% endblock mainmenu %}
 
+
+<table class="table-content" border=0 cellpadding="0" cellspacing="0">
+<tr>
+<!-- Sidebar зліва -->
+	<td valign="top" class="left-chapters">
+	<ul id="leftchapters">
+		<li class="selected">Всі категорії</li>
+		<li><a href="#">One</a></li>
+		<li><a href="#">Two</a></li>
+		<li><a href="#">Three</a></li>
+		<li class="share">
+		<p>Наш канал</p>
+		<a class="share-yt" href="https://www.youtube.com/@STERNENKO" target="_blank" rel="nofollow"></a>
+		</li>
+	</ul>
+</td>
+<!-- Кінець Sidebar'а -->
+<td valign="top" class="content">
+	<!-- Хлібні крихти -->
+	{% block breadcrumbs %}
+	{% endblock %}
+
+<!-- Блок контенту -->
+	<div class="content-text">
 {% block content %}
 {% endblock %}
+	</div>
+<!-- Кінець блоку контенту -->
 
+</td></tr></table>
+</td></tr>
+<!-- Footer -->
+<tr><td valign=top>
+	<div id="footer">
+		<p>&copy; 2023 Часткове або повне копіювання інформації з даного сайту для розповсюдження на інших ресурсах,
+			у тому числі паперових, суворо заборонено.</p>
+	</div>
+</td></tr></table>
+<!-- Кінець footer'а та сторінки -->
 </body>
 </html>

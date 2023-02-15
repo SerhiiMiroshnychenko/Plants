@@ -1,20 +1,15 @@
 {% extends 'plants/base.html' %}
 
-
-{% block heading %}
-<h1>Вітаємо на сайті <br>"PLANTS":<br><i> все про ароїдні рослини!</i></h1>
-{% endblock %}
-
 {% block content %}
-<h1>СТАТТІ:</h1>
-<ul>
-    {% for p in posts %}
-    <li>
-        <h2>{{ p.title }}</h2>
-        <p>{{ p.content }}</p>
-        <hr>
-    </li>
-    {% endfor %}
+<ul class="list-articles">
+	{% for p in posts %}
+			<li><h2>{{p.title}}</h2>
+	{% autoescape on %}
+	{{p.content|linebreaks|truncatewords:50}}
+	{% endautoescape %}
+			<div class="clear"></div>
+			<p class="link-read-post"><a href="#">Читати пост</a></p>
+			</li>
+	{% endfor %}
 </ul>
-
 {% endblock %}
