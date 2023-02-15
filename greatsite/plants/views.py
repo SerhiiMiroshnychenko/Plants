@@ -1,12 +1,25 @@
 from django.http import HttpResponse, HttpResponseNotFound, Http404
-from django.shortcuts import redirect
+from django.shortcuts import redirect, render
+
+from .models import *
+
+
+menu = ['Про сайт', 'Додати статтю', "Зворотній зв'язок", 'Вхід']
 
 
 # Create your views here.
 def index(request):
     # request == посилання на клас HttpRequest
     # через request нам доступна вся поточна інформація в рамках поточного запиту
-    return HttpResponse('\t<h1>Вітаємо на сайті <br>"PLANTS":<br><i> все про ароїдні рослини!</i></h1>')
+    # return HttpResponse('<h1>Вітаємо на сайті <br>"PLANTS":<br><i> все про ароїдні рослини!</i></h1>')
+    posts = Plants.objects.all()  # Посилання на всі записи бази даних
+    return render(request, 'plants/index.html',
+                  {'title': 'Додаток PLANTS', 'menu': menu, 'posts': posts})
+
+
+def about(request):
+    return render(request, 'plants/about.html', {'title': 'Про сайт', 'menu': menu})
+
 
 
 def categories(request):
