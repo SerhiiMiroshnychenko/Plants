@@ -6,6 +6,7 @@ from django.urls import reverse
 class Plants(models.Model):
     # Поле id вже є в базовому класі Model, прописувати його не треба
     title = models.CharField(max_length=255, verbose_name='Вид рослини')
+    slug = models.SlugField(max_length=255, unique=True, db_index=True, verbose_name="URL")
     content = models.TextField(blank=True, verbose_name='Текст статті')  # blank=True -> показує, що поле може бути пустим
     photo = models.ImageField(upload_to='photos/%Y/%m/%d/', verbose_name='Фото')  # upload_to -> показує в який каталог і які підкаталоги
     # ми будемо завантажувати наші фото
@@ -14,14 +15,14 @@ class Plants(models.Model):
     time_update = models.DateTimeField(auto_now=True, verbose_name='Час змінення')  # auto_now=True -> буде автоматично змінюватися кожен раз,
     # коли ми щось змінюємо в допису
     is_published = models.BooleanField(default=True, verbose_name='Публікація')  #
-    cat = models.ForeignKey('Category', on_delete=models.PROTECT, null=True, verbose_name='Категорія')  # 'Category' - у вигляді стрічки позаяк визначення
+    cat = models.ForeignKey('Category', on_delete=models.PROTECT, verbose_name='Категорія')  # 'Category' - у вигляді стрічки позаяк визначення
     # класу Category відбувається після моделі Plants
 
     def __str__(self):
         return self.title
 
     def get_absolute_url(self):
-        return reverse('post', kwargs={'post_id': self.pk})
+        return reverse('post', kwargs={'post_slug': self.slug})
 
     class Meta:
         verbose_name = 'Ароїдні рослини'
@@ -34,12 +35,13 @@ class Plants(models.Model):
 class Category(models.Model):
     name = models.CharField(max_length=100, db_index=True, verbose_name='Категорія')  # db_index=True => поле буде індексовано,
     # пошук по ньому буде відбуватися швидше
+    slug = models.SlugField(max_length=255, unique=True, db_index=True, verbose_name="URL")
 
     def __str__(self):
         return self.name
 
     def get_absolute_url(self):
-        return reverse('category', kwargs={'cat_id': self.pk})
+        return reverse('category', kwargs={'cat_slug': self.slug})
 
     class Meta:
         verbose_name = 'Категорія'

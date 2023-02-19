@@ -10,12 +10,13 @@ class PlantsAdmin(admin.ModelAdmin):
     search_fields = ('title', 'content')  # За якими полями можна буде проводити пошук
     list_editable = ('is_published',)  # Робимо поле is_published таким, що можна редагувати з адмін-панелі
     list_filter = ('is_published', 'time_create')  # Призначаємо поля для фільтрації списку статей
-
+    prepopulated_fields = {"slug": ("title",)}
 
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ('id', 'name')
     list_display_links = ('id', 'name')
     search_fields = ('name',)
+    prepopulated_fields = {"slug": ("name",)}  # Заповнювати автоматично поле slug на основі поля name
 
 
 admin.site.register(Plants, PlantsAdmin)

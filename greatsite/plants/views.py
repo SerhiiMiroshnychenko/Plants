@@ -1,6 +1,8 @@
 from django.http import HttpResponse, HttpResponseNotFound, Http404
-from django.shortcuts import redirect, render
-from .models import *
+from django.shortcuts import redirect, render, get_object_or_404
+from .forms import *
+from django.urls import reverse_lazy
+from django.views.generic import ListView, DetailView, CreateView
 
 
 menu = [{'title': "Про сайт", 'url_name': 'about'},
@@ -10,20 +12,36 @@ menu = [{'title': "Про сайт", 'url_name': 'about'},
 
 
 # Create your views here.
-def index(request):
-    # request == посилання на клас HttpRequest
-    # через request нам доступна вся поточна інформація в рамках поточного запиту
-    # return HttpResponse('<h1>Вітаємо на сайті <br>"PLANTS":<br><i> все про ароїдні рослини!</i></h1>')
-    posts = Plants.objects.all()  # Посилання на всі записи бази даних
+class PlantsHome(ListView):
+    model = Plants  # Модель список екземплярів якої будемо подавати
+    template_name = 'plants/index.html'  # Адреса шаблону, куди подавати
+    context_object_name = 'posts'  # Ім'я з яким викликається в шаблоні index.html
 
-    context_dict = {
-        'posts': posts,
-        'menu': menu,
-        'title': 'Додаток PLANTS',
-        'cat_selected': 0,
-               }
-    return render(request, 'plants/index.html',
-                  context=context_dict)
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)  # Передаємо вже сформований контекст
+        context['menu'] = menu
+        context['title'] = 'Головна сторінка'
+        context['cat_selected'] = 0
+        return context
+
+    def get_queryset(self):
+        return Plants.objects.filter(is_published=True)
+
+
+# def index(request):
+#     # request == посилання на клас HttpRequest
+#     # через request нам доступна вся поточна інформація в рамках поточного запиту
+#     # return HttpResponse('<h1>Вітаємо на сайті <br>"PLANTS":<br><i> все про ароїдні рослини!</i></h1>')
+#     posts = Plants.objects.all()  # Посилання на всі записи бази даних
+#
+#     context_dict = {
+#         'posts': posts,
+#         'menu': menu,
+#         'title': 'Додаток PLANTS',
+#         'cat_selected': 0,
+#                }
+#     return render(request, 'plants/index.html',
+#                   context=context_dict)
 
 
 def about(request):
@@ -53,8 +71,31 @@ def archive(request, year):
     return HttpResponse(f'<h1>Архів за минулі роки</h1><hr><p>{year} рік</p>')
 
 
-def addpage(request):
-    return HttpResponse('Додати статтю')
+class AddPage(CreateView):
+    form_class = AddPostForm
+    template_name = 'plants/addpage.html'
+    success_url = reverse_lazy('home')  # Маршрут, куди ми перейдемо після додавання статті
+    # Функція reverse_lazy - будує маршрут коли він буде потрібен, а не наперед
+    # Це запобігає помилці, коли маршрут намагається побудуватися, коли django
+    # Ще його не побудував
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Додавання статті'
+        context['menu'] = menu
+        return context
+
+# def addpage(request):
+#     if request.method == 'POST':
+#         form = AddPostForm(request.POST, request.FILES)
+#         if form.is_valid():
+#             #print(form.cleaned_data)
+#             form.save()
+#             return redirect('home')
+#     else:
+#         form = AddPostForm()
+#     return render(request, 'plants/addpage.html', {'form': form, 'menu': menu, 'title': 'Додавання статті'})
+
 
 
 def contact(request):
@@ -65,25 +106,64 @@ def login(request):
     return HttpResponse('Вхід')
 
 
-def show_post(request, post_id):
-    return HttpResponse(f'Відображення статті з id = {post_id}')
+class ShowPost(DetailView):
+    model = Plants
+    template_name = 'plants/post.html'  # Шаблон за яким буде подаватися
+    slug_url_kwarg = 'post_slug'  # Слаг для подання в URL
+    # pk_url_kwarg = 'post_pk'
+    context_object_name = 'post'  # Ім'я під яким викликається в шаблоні post.html
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = context['post']
+        context['menu'] = menu
+        return context
+
+# def show_post(request, post_slug):
+#     # post = get_object_or_404(Plants, slug=post_slug)
+#     post = get_object_or_404(Plants, slug=post_slug)
+#
+#     context = {
+#         'post': post,
+#         'menu': menu,
+#         'title': post.title,
+#         'cat_selected': post.cat_id,
+#     }
+#
+#     return render(request, 'plants/post.html', context=context)
 
 
-def show_category(request, cat_id):
-    posts = Plants.objects.filter(cat_id=cat_id)
+class PlantsCategory(ListView):
+    model = Plants
+    template_name = 'plants/index.html'
+    context_object_name = 'posts'
+    allow_empty = False
 
-    # if len(posts) == 0:
-        # raise Http404()
+    def get_queryset(self):
+        return Plants.objects.filter(cat__slug=self.kwargs['cat_slug'], is_published=True)
 
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Категорія - ' + str(context['posts'][0].cat)
+        context['menu'] = menu
+        context['cat_selected'] = context['posts'][0].cat_id
+        return context
 
-    context = {
-        'posts': posts,
-        'menu': menu,
-        'title': 'Відображення за рубриками',
-        'cat_selected': cat_id,
-    }
-
-    return render(request, 'plants/index.html', context=context)
+# def show_category(request, cat_id):
+#     posts = Plants.objects.filter(cat_id=cat_id)
+#
+#     # if len(posts) == 0:
+#         # raise Http404()
+#
+#
+#     context = {
+#         'posts': posts,
+#         'menu': menu,
+#         'title': 'Відображення за рубриками',
+#         'cat_selected': cat_id,
+#     }
+#
+#     return render(request, 'plants/index.html', context=context)
 
 
 
