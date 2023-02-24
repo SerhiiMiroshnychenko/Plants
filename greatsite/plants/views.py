@@ -1,8 +1,12 @@
 from django.http import HttpResponse, HttpResponseNotFound, Http404
 from django.shortcuts import redirect, render, get_object_or_404
-from .forms import *
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView
+from django.contrib.auth.mixins import LoginRequiredMixin
+
+from .forms import *
+from .models import *
+from .utils import *
 
 
 menu = [{'title': "Про сайт", 'url_name': 'about'},
@@ -12,17 +16,19 @@ menu = [{'title': "Про сайт", 'url_name': 'about'},
 
 
 # Create your views here.
-class PlantsHome(ListView):
+class PlantsHome(DataMixin, ListView):
     model = Plants  # Модель список екземплярів якої будемо подавати
     template_name = 'plants/index.html'  # Адреса шаблону, куди подавати
     context_object_name = 'posts'  # Ім'я з яким викликається в шаблоні index.html
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)  # Передаємо вже сформований контекст
-        context['menu'] = menu
-        context['title'] = 'Головна сторінка'
-        context['cat_selected'] = 0
-        return context
+        # context['menu'] = menu
+        # context['title'] = 'Головна сторінка'
+        # context['cat_selected'] = 0
+        # return context
+        c_def = self.get_user_context(title="Головна сторінка")
+        return dict(list(context.items()) + list(c_def.items()))
 
     def get_queryset(self):
         return Plants.objects.filter(is_published=True)
@@ -71,7 +77,7 @@ def archive(request, year):
     return HttpResponse(f'<h1>Архів за минулі роки</h1><hr><p>{year} рік</p>')
 
 
-class AddPage(CreateView):
+class AddPage(DataMixin, CreateView):
     form_class = AddPostForm
     template_name = 'plants/addpage.html'
     success_url = reverse_lazy('home')  # Маршрут, куди ми перейдемо після додавання статті
@@ -81,9 +87,11 @@ class AddPage(CreateView):
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['title'] = 'Додавання статті'
-        context['menu'] = menu
-        return context
+        # context['title'] = 'Додавання статті'
+        # context['menu'] = menu
+        # return context
+        c_def = self.get_user_context(title="Додавання статті")
+        return dict(list(context.items()) + list(c_def.items()))
 
 # def addpage(request):
 #     if request.method == 'POST':
@@ -106,7 +114,7 @@ def login(request):
     return HttpResponse('Вхід')
 
 
-class ShowPost(DetailView):
+class ShowPost(DataMixin, DetailView):
     model = Plants
     template_name = 'plants/post.html'  # Шаблон за яким буде подаватися
     slug_url_kwarg = 'post_slug'  # Слаг для подання в URL
@@ -115,9 +123,11 @@ class ShowPost(DetailView):
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['title'] = context['post']
-        context['menu'] = menu
-        return context
+        # context['title'] = context['post']
+        # context['menu'] = menu
+        # return context
+        c_def = self.get_user_context(title=context['post'])
+        return dict(list(context.items()) + list(c_def.items()))
 
 # def show_post(request, post_slug):
 #     # post = get_object_or_404(Plants, slug=post_slug)
@@ -133,7 +143,7 @@ class ShowPost(DetailView):
 #     return render(request, 'plants/post.html', context=context)
 
 
-class PlantsCategory(ListView):
+class PlantsCategory(DataMixin, ListView):
     model = Plants
     template_name = 'plants/index.html'
     context_object_name = 'posts'
@@ -144,10 +154,13 @@ class PlantsCategory(ListView):
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['title'] = 'Категорія - ' + str(context['posts'][0].cat)
-        context['menu'] = menu
-        context['cat_selected'] = context['posts'][0].cat_id
-        return context
+        # context['title'] = 'Категорія - ' + str(context['posts'][0].cat)
+        # context['menu'] = menu
+        # context['cat_selected'] = context['posts'][0].cat_id
+        # return context
+        c_def = self.get_user_context(title='Категорія - ' + str(context['posts'][0].cat),
+                                      cat_selected=context['posts'][0].cat_id)
+        return dict(list(context.items()) + list(c_def.items()))
 
 # def show_category(request, cat_id):
 #     posts = Plants.objects.filter(cat_id=cat_id)
@@ -164,7 +177,6 @@ class PlantsCategory(ListView):
 #     }
 #
 #     return render(request, 'plants/index.html', context=context)
-
 
 
 def pageNotFound(request, exception):
