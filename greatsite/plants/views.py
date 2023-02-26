@@ -1,3 +1,5 @@
+from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
 from django.http import HttpResponse, HttpResponseNotFound, Http404
 from django.shortcuts import redirect, render, get_object_or_404
 from django.urls import reverse_lazy
@@ -5,7 +7,6 @@ from django.views.generic import ListView, DetailView, CreateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 from .forms import *
-from .models import *
 from .utils import *
 
 
@@ -49,10 +50,14 @@ class PlantsHome(DataMixin, ListView):
 #     return render(request, 'plants/index.html',
 #                   context=context_dict)
 
-
+# @login_required => Робить сторінку яку обслуговує функція, доступною тільки для зареєстрованих користувачів
 def about(request):
-    return render(request, 'plants/about.html', {'title': 'Про сайт', 'menu': menu})
+    contact_list = Plants.objects.all().order_by('-time_update')
+    paginator = Paginator(contact_list, 3)
 
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    return render(request, 'plants/about.html', {'title': 'Про сайт', 'menu': menu, 'page_obj': page_obj})
 
 
 def categories(request):
@@ -77,13 +82,15 @@ def archive(request, year):
     return HttpResponse(f'<h1>Архів за минулі роки</h1><hr><p>{year} рік</p>')
 
 
-class AddPage(DataMixin, CreateView):
+class AddPage(LoginRequiredMixin, DataMixin, CreateView):
     form_class = AddPostForm
     template_name = 'plants/addpage.html'
     success_url = reverse_lazy('home')  # Маршрут, куди ми перейдемо після додавання статті
     # Функція reverse_lazy - будує маршрут коли він буде потрібен, а не наперед
     # Це запобігає помилці, коли маршрут намагається побудуватися, коли django
     # Ще його не побудував
+    login_url = reverse_lazy('home')  # Вказує адресу перенаправлення для незареєстрованого користувача
+    # raise_exception = True => Генерує помилку 403 для незареєстрованого користувача
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)

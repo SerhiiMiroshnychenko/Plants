@@ -1,5 +1,5 @@
 html, body {
-	font-family: 'Arial', sans-serif;
+	font-family: 'Arial';
 	margin: 0;
 	padding: 0;
 	height: 100%;
@@ -214,7 +214,7 @@ ul.breadcrumbs {
 	padding: 0;
 	list-style: none;
 	font-size: 20px;
-	font-family: Sans-serif, Arial, Tahoma, sans-serif;
+	font-family: Sans-serif, Arial, Tahoma;
 }
 ul.breadcrumbs li {
 	display: inline-block;
@@ -234,7 +234,7 @@ ul.control {
 	margin: 0;
 	padding: 60px 0 0 0;
 	list-style: none;
-	font-family: Sans-serif, Arial, Tahoma, sans-serif;
+	font-family: Sans-serif, Arial, Tahoma;
 	font-size: 18px;
 	width: 100%;
 }
@@ -249,7 +249,7 @@ ul.content-table {
 	margin: 0;
 	padding: 60px 0 0 30px;
 	list-style: none;
-	font-family: Sans-serif, Arial, Tahoma, sans-serif;
+	font-family: Sans-serif, Arial, Tahoma;
 	font-size: 28px;
 }
 ul.content-table li {
@@ -265,7 +265,7 @@ ul.content-table li a:hover {color: #F0711C;}
 	margin: 60px 0 0 30px;
 	color: #000;
 	font-size: 20px;
-	font-family: Arial, sans-serif;
+	font-family: Yandex Sans Display Light;
 }
 .content-text h1 {font-size: 32px;}
 
@@ -279,7 +279,7 @@ ul.lang-list {
 	border-top: 1px solid #959A82;
 	box-sizing: border-box;
 	font-size: 18px;
-	font-family: Sans-serif, Arial, Tahoma, sans-serif;
+	font-family: Sans-serif, Arial, Tahoma;
 }
 ul.lang-list li {
 	display: inline-block;
@@ -304,12 +304,12 @@ ul.lang-list li a:hover {color: #fdc073;}
 	padding: 0 10px 0 10px;
 	margin-left: 30px;
 	background: #fff;
-	font-family: Sans-serif, Arial, Tahoma, sans-serif;
+	font-family: Sans-serif, Arial, Tahoma;
 }
 
 .list-topic {
 	margin: 40px 0 60px 0;
-	font-family: Sans-serif, Arial, Tahoma, sans-serif;
+	font-family: Sans-serif, Arial, Tahoma;
 }
 .list-topic p {
 	margin: 0;
@@ -322,7 +322,7 @@ ul.lang-list li a:hover {color: #fdc073;}
 }
 .list-topic ol li {
 	display: list-item;
-	margin: 10px 10px 0 0;
+	margin: 10px 10px 0 0px;
 	padding: 0 0 0 10px;
 }
 .list-topic ol li a {
@@ -349,7 +349,7 @@ ul.lang-list li a:hover {color: #fdc073;}
 .quote {
 	background: url('../images/blockquote.png') no-repeat 0 10px;
 	padding: 5px 5px 5px 70px;
-	font-family: Sans-serif, Arial, Tahoma, sans-serif;
+	font-family: Sans-serif, Arial, Tahoma;
 	font-style: italic;
 }
 
@@ -360,7 +360,7 @@ ul.lang-list li a:hover {color: #fdc073;}
 	padding: 5px;
 	color: #aaa;
 	font-size: 14px;
-	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-family: Verdana, Geneva, Arial, Helvetica;
 	text-align: left;
 	overflow: hidden;
 }
@@ -389,4 +389,42 @@ ul.lang-list li a:hover {color: #fdc073;}
 .form-button {
     min-width: 200px;
     font-size: 16px;
+}
+
+.list-pages {
+	text-align: center;
+	margin: 0 0 20px 0;
+}
+.list-pages ul {
+	margin: 20px 0 0 0;
+	padding: 0;
+	list-style: none;
+}
+.list-pages ul li {
+	display: inline-block;
+	margin: 0 20px 0 0;
+}
+.list-pages a {
+	color: #000;
+	font-size: 24px;
+	text-decoration: none;
+}
+.list-pages .page-num, .page-num-selected {
+	display: inline-block;
+	width: 60px;
+	height: 44px;
+	padding: 16px 0 0 0;
+	border: 1px solid #d0d0d0;
+	border-radius: 30px;
+}
+.list-pages .page-num:hover {
+	box-shadow: 3px 3px 1px #d0d0d0; 
+}
+.list-pages .page-num-selected {
+	border: none;
+	color: #000;
+	font-size: 20px;
+}
+.list-pages .page-num-selected:hover {
+	box-shadow: none; 
 }
