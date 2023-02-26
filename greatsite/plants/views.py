@@ -10,12 +10,6 @@ from .forms import *
 from .utils import *
 
 
-menu = [{'title': "Про сайт", 'url_name': 'about'},
-        {'title': "Додати статтю", 'url_name': 'add_page'},
-        {'title': "Зворотній зв'язок", 'url_name': 'contact'},
-        {'title': "Вхід", 'url_name': 'login'}]
-
-
 # Create your views here.
 class PlantsHome(DataMixin, ListView):
     model = Plants  # Модель список екземплярів якої будемо подавати
@@ -189,3 +183,14 @@ class PlantsCategory(DataMixin, ListView):
 def pageNotFound(request, exception):
     # Обробка помилки 404
     return HttpResponseNotFound('<h1>Сторінка не знайдена</h1>')
+
+
+class RegisterUser(DataMixin, CreateView):
+    form_class = RegisterUserForm
+    template_name = 'plants/register.html'
+    success_url = reverse_lazy('login')
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        c_def = self.get_user_context(title="Реєстрація")
+        return dict(list(context.items()) + list(c_def.items()))
